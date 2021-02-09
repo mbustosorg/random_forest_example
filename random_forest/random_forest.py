@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
 
 """ XOR Model """
 X = [[-1, -1], [-1, 1], [1, -1], [0, 0]]
@@ -12,7 +13,7 @@ print(clf.predict([[-1, -1], [-1, 1], [1, -1], [0, 0]]))
 
 """ Random model, 10 inputs with 4 classes """
 if True:
-    X, y = make_classification(n_samples=1000, n_features=10,
+    X, y = make_classification(n_samples=5000, n_features=10,
                                n_informative=5, n_redundant=0,
                                n_classes=4,
                                random_state=0, shuffle=False)
@@ -25,9 +26,10 @@ else:
     with open('random.npy', 'rb') as random_data:
         X = np.load(random_data)
         y = np.load(random_data)
-clf = RandomForestClassifier(max_depth=2, random_state=0)
+clf = RandomForestClassifier(random_state=0)
 clf.fit(X, y)
-print(clf.predict(X))
+pred_y = clf.predict(X)
+print(confusion_matrix(y, pred_y))
 
 """ Write out ONNX """
 from skl2onnx import convert_sklearn
