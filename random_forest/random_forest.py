@@ -32,7 +32,7 @@ print(clf.predict(X))
 """ Write out ONNX """
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
-initial_type = [('float_input', FloatTensorType([None, 4]))]
+initial_type = [('float_input', FloatTensorType([None, 10]))]
 onx = convert_sklearn(clf, initial_types=initial_type)
 with open("random.onnx", "wb") as f:
     f.write(onx.SerializeToString())
