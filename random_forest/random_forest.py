@@ -26,4 +26,11 @@ else:
 clf = RandomForestClassifier(max_depth=2, random_state=0)
 clf.fit(X, y)
 print(clf.predict(X))
-print()
+
+""" Write out ONNX """
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+initial_type = [('float_input', FloatTensorType([None, 4]))]
+onx = convert_sklearn(clf, initial_types=initial_type)
+with open("random.onnx", "wb") as f:
+    f.write(onx.SerializeToString())
