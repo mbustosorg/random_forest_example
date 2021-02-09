@@ -2,6 +2,9 @@ import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+import onnxruntime as rt
 
 """ XOR Model """
 X = [[-1, -1], [-1, 1], [1, -1], [0, 0]]
@@ -30,11 +33,16 @@ clf = RandomForestClassifier(random_state=0)
 clf.fit(X, y)
 pred_y = clf.predict(X)
 print(confusion_matrix(y, pred_y))
+print((y - pred_y).sum())
 
 """ Write out ONNX """
-from skl2onnx import convert_sklearn
-from skl2onnx.common.data_types import FloatTensorType
 initial_type = [('float_input', FloatTensorType([None, 10]))]
 onx = convert_sklearn(clf, initial_types=initial_type)
 with open("random.onnx", "wb") as f:
     f.write(onx.SerializeToString())
+
+""" Predict with ONNX """
+sess = rt.InferenceSession("random.onnx")
+input_name = sess.get_inputs()[0].name
+label_name = sess.get_outputs()[0].name
+pred_onx = sess.run([label_name], {input_name: X.astype(numpy.float32)})[0]
