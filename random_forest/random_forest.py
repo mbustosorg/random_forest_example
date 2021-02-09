@@ -16,6 +16,8 @@ if True:
                                n_informative=5, n_redundant=0,
                                n_classes=4,
                                random_state=0, shuffle=False)
+    np.savetxt("x.csv", X, delimiter=",")
+    np.savetxt("y.csv", y, delimiter=",")
     with open('random.npy', 'wb') as random_data:
         np.save(random_data, X)
         np.save(random_data, y)
